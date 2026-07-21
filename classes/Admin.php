@@ -1,0 +1,2 @@
+<?php
+class Admin{private $db;function __construct($db){$this->db=$db;}function login($e,$p){$s=$this->db->prepare('SELECT * FROM admins WHERE email=? AND status=1');$s->execute([$e]);$u=$s->fetch(PDO::FETCH_ASSOC);if($u&&password_verify($p,$u['password'])){session_regenerate_id(true);$_SESSION['admin_id']=$u['id'];$_SESSION['admin_name']=$u['fullname'];$_SESSION['role']=$u['role'];return true;}return false;}}

@@ -1,0 +1,10 @@
+[2026-07-20 02:22:16] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'fullname' in 'field list' | #0 C:\wamp64\www\Bootcamp\models\Student.php(10): PDO->prepare('INSERT INTO stu...')
+#1 C:\wamp64\www\Bootcamp\services\RegistrationService.php(63): StudentModel->create(Array)
+#2 C:\wamp64\www\Bootcamp\controllers\RegistrationController.php(31): RegistrationService->register(Array)
+#3 C:\wamp64\www\Bootcamp\ajax\register.php(7): RegistrationController->handle()
+#4 {main}
+[2026-07-20 02:22:20] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'fullname' in 'field list' | #0 C:\wamp64\www\Bootcamp\models\Student.php(10): PDO->prepare('INSERT INTO stu...')
+#1 C:\wamp64\www\Bootcamp\services\RegistrationService.php(63): StudentModel->create(Array)
+#2 C:\wamp64\www\Bootcamp\controllers\RegistrationController.php(31): RegistrationService->register(Array)
+#3 C:\wamp64\www\Bootcamp\ajax\register.php(7): RegistrationController->handle()
+#4 {main}

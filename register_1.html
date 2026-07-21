@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootcamp Registration Portal | Habatech</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Global Header -->
+    <div class="bg-white border-bottom py-3 shadow-xs mb-5">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="fw-extrabold text-primary text-decoration-none fs-4"><span class="text-purple">Haba</span>tech</a>
+            <a href="index.html" class="btn btn-sm btn-outline-secondary rounded-pill px-3"><i class="fa-solid fa-arrow-left me-1"></i> Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Multi-Step Wizard Form Container -->
+    <div class="container max-w-lg mb-5">
+        <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
+            <div class="bg-primary p-4 text-white text-center position-relative">
+                <h3 class="fw-bold mb-1">Registration Workspace</h3>
+                <p class="text-white-50 small mb-0">Secure your seat for the 2024-2026 Holiday Session</p>
+                
+                <!-- Horizontal Progress Tracker -->
+                <div class="progress mt-4 bg-dark-blue dynamic-progress-height rounded-pill">
+                    <div class="progress-bar bg-warning transition-all" role="progressbar" id="wizardProgressBar" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <!-- Step Indicators Grid -->
+            <div class="row g-0 text-center border-bottom bg-light py-3 small fw-bold text-muted" id="stepIndicators">
+                <div class="col-3 step-tab active" data-step="1">1. Student</div>
+                <div class="col-3 step-tab" data-step="2">2. Parent</div>
+                <div class="col-3 step-tab" data-step="3">3. Course</div>
+                <div class="col-3 step-tab" data-step="4">4. Review</div>
+            </div>
+
+            <!-- Core Form Structure -->
+            <form id="multiStepForm" class="p-4 needs-validation" novalidate enctype="multipart/form-data">
+                
+                <!-- STEP 1: Student Information -->
+                <div class="form-step active-step" data-step="1">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-user-graduate text-primary me-2"></i>Student Details</h5>
+                    
+                    <!-- File Upload Input with Live Local Real-time Preview -->
+                    <div class="mb-4 text-center">
+                        <div class="avatar-preview-box mx-auto mb-2 border rounded-circle d-flex align-items-center justify-content-center overflow-hidden position-relative bg-light">
+                            <img id="avatarImgPreview" src="" alt="Preview" class="w-100 h-100 d-none object-cover">
+                            <i class="fa-solid fa-camera text-muted fs-3 upload-placeholder-icon"></i>
+                        </div>
+                        <label for="studentPhoto" class="btn btn-sm btn-outline-primary rounded-pill px-3">Upload Profile Photo</label>
+                        <input type="file" id="studentPhoto" name="studentPhoto" class="d-none" accept="image/*" required>
+                        <div class="invalid-feedback text-center">Student photo passport file configuration layout required.</div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">First Name</label>
+                            <input type="text" class="form-control rounded-3" name="firstName" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Last Name</label>
+                            <input type="text" class="form-control rounded-3" name="lastName" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Gender</label>
+                            <select class="form-select rounded-3" name="gender" required>
+                                <option value="" selected disabled>Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Date of Birth</label>
+                            <input type="date" class="form-control rounded-3" name="dob" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Current School</label>
+                            <input type="text" class="form-control rounded-3" name="currentSchool" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Class / Level</label>
+                            <input type="text" class="form-control rounded-3" name="classLevel" placeholder="e.g. JSS2, Primary 5" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Nationality</label>
+                            <input type="text" class="form-control rounded-3" name="nationality" value="Ivorian" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Residential Address</label>
+                            <textarea class="form-control rounded-3" name="address" rows="2" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Parent Information -->
+                <div class="form-step d-none" data-step="2">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-user-shield text-purple me-2"></i>Parent / Guardian Details</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Full Name</label>
+                            <input type="text" class="form-control rounded-3" name="parentName" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Relationship</label>
+                            <input type="text" class="form-control rounded-3" name="parentRelationship" placeholder="e.g. Father, Mother" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Occupation</label>
+                            <input type="text" class="form-control rounded-3" name="parentOccupation" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Phone Number</label>
+                            <input type="tel" class="form-control rounded-3" name="parentPhone" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">WhatsApp Phone Line</label>
+                            <input type="tel" class="form-control rounded-3" name="parentWhatsapp" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Email Address</label>
+                            <input type="email" class="form-control rounded-3" name="parentEmail" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Emergency Alternative Contact Connection</label>
+                            <input type="text" class="form-control rounded-3" name="emergencyContact" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Course Preference Configurations -->
+                <div class="form-step d-none" data-step="3">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-sliders text-orange me-2"></i>Course Optimization</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Select Bootcamp Track</label>
+                            <select class="form-select rounded-3" id="courseSelectionField" name="selectedCourse" required>
+                                <option value="" selected disabled>Choose your system node...</option>
+                                <option value="scratch">Game Development with Scratch Coding (Upper Primary)</option>
+                                <option value="mobile">Mobile App Development - MIT App Inventor (JSS1-JSS3)</option>
+                                <option value="web">Web App Development - Full Stack UI (SS1-SS3)</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Preferred Session Shift</label>
+                            <select class="form-select rounded-3" name="preferredSession" required>
+                                <option value="" selected disabled>Select timing...</option>
+                                <option value="morning">Morning Track (09:00 - 12:00)</option>
+                                <option value="afternoon">Afternoon Track (13:00 - 16:00)</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold text-muted">Graduation T-Shirt Size</label>
+                            <select class="form-select rounded-3" name="tshirtSize" required>
+                                <option value="" selected disabled>Select size map...</option>
+                                <option value="xs">XS</option>
+                                <option value="s">S</option>
+                                <option value="m">M</option>
+                                <option value="l">L</option>
+                                <option value="xl">XL</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Live Payment Summary & Final Attestation -->
+                <div class="form-step d-none" data-step="4">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-receipt text-success me-2"></i>Review & Financial Invoicing</h5>
+                    
+                    <div class="bg-light rounded-4 p-3 border mb-4">
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Selected Track Module:</span>
+                            <span class="fw-bold text-dark id-target-preview font-alt" id="reviewCourseName">None Selected</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Location/Host Campus:</span>
+                            <span class="fw-bold text-dark">Fountain Mission Int. School</span>
+                        </div>
+                        <hr class="text-muted">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-dark mb-0">Total Computed Tuition Fee:</span>
+                            <span class="h4 fw-extrabold text-success mb-0" id="reviewFeeDisplay">35,000 CFA</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check bg-light rounded p-3 border">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" id="termsAgreementCheckbox" required>
+                            <label class="form-check-label small text-muted fw-medium" for="termsAgreementCheckbox">
+                                I verify all submitted information matches valid state identification models and agree to allow Habatech processing frameworks.
+                            </label>
+                            <div class="invalid-feedback">You must explicitly accept data platform terms prior to proceeding.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Navigation Footers -->
+                <div class="d-flex justify-content-between border-top pt-4 mt-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4 d-none" id="prevWizardStepBtn"><i class="fa-solid fa-chevron-left me-1"></i> Back</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 ms-auto" id="nextWizardStepBtn">Next Step <i class="fa-solid fa-chevron-right ms-1"></i></button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4 d-none ms-auto" id="submitWizardFormBtn"><i class="fa-solid fa-credit-card me-1"></i> Proceed to Payment</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Components Framework -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

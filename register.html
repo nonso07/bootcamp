@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Bootcamp Registration Portal</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- UI Core & Icon Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. Design Tokens & Core Variables
+       ========================================================================== */
+    :root {
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Poppins', sans-serif;
+      
+      --clr-primary: #2563EB;
+      --clr-primary-hover: #1D4ED8;
+      --clr-secondary: #7C3AED;
+      --clr-success: #16A34A;
+      --clr-warning: #F59E0B;
+      --clr-danger: #DC2626;
+      --clr-bg: #F8FAFC;
+      --clr-card: #FFFFFF;
+      --clr-text-main: #1E293B;
+      --clr-text-muted: #64748B;
+      --clr-border: #E2E8F0;
+      
+      --radius-premium: 18px;
+      --shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ==========================================================================
+       2. Global Resets & Layout Framework
+       ========================================================================== */
+    body {
+      font-family: var(--font-body);
+      background-color: var(--clr-bg);
+      color: var(--clr-text-main);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--clr-text-main);
+    }
+
+    .app-container {
+      max-width: 920px;
+      margin: 7rem auto 3.5rem;
+      padding: 0 1.5rem;
+    }
+
+    .navbar-brand {
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .text-purple {
+      color: var(--clr-secondary);
+    }
+
+    .navbar .nav-link {
+      color: var(--clr-text-main) !important;
+      font-weight: 500;
+    }
+
+    .navbar .nav-link:hover {
+      color: var(--clr-primary) !important;
+    }
+
+    .premium-card {
+      background: var(--clr-card);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-premium);
+      box-shadow: var(--shadow-premium);
+      padding: 2.5rem;
+      transition: var(--transition-smooth);
+    }
+
+    /* ==========================================================================
+       3. Modern Multi-Step Progress Tracker
+       ========================================================================== */
+    .step-track-container {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 3.5rem;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .step-track-container::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: var(--clr-border);
+      z-index: 1;
+    }
+
+    .step-progress-line {
+      position: absolute;
+      top: 24px;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-secondary));
+      z-index: 2;
+      width: 0%;
+      transition: var(--transition-smooth);
+    }
+
+    .step-node {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .step-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--clr-card);
+      border: 2px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--clr-text-muted);
+      transition: var(--transition-smooth);
+      box-shadow: 0 0 0 4px var(--clr-bg);
+    }
+
+    .step-node.active .step-circle {
+      border-color: var(--clr-primary);
+      color: var(--clr-primary);
+      box-shadow: 0 0 0 4px var(--clr-bg), 0 0 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .step-node.completed .step-circle {
+      background-color: var(--clr-primary);
+      border-color: var(--clr-primary);
+      color: #ffffff;
+    }
+
+    .step-label {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
+      transition: var(--transition-smooth);
+    }
+
+    .step-node.active .step-label {
+      color: var(--clr-primary);
+      font-weight: 600;
+    }
+
+    .step-node.completed .step-label {
+      color: var(--clr-text-main);
+    }
+
+    /* ==========================================================================
+       4. Component Layouts & Interaction Elements
+       ========================================================================== */
+    .form-step {
+      display: none;
+      animation: stepFadeSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    @keyframes stepFadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Input Field Modifications */
+    .form-label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--clr-text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid var(--clr-border);
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      font-size: 0.95rem;
+      color: var(--clr-text-main);
+      transition: var(--transition-smooth);
+      background-color: #FCFDFE;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+      background-color: #ffffff;
+    }
+
+    /* Interactive Passport Upload Zone */
+    .avatar-upload-wrapper {
+      border: 2px dashed var(--clr-border);
+      border-radius: var(--radius-premium);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      background-color: #FCFDFE;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+
+    .avatar-upload-wrapper:hover {
+      border-color: var(--clr-primary);
+      background-color: rgba(37, 99, 235, 0.01);
+    }
+
+    .avatar-preview-box {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background-color: #F1F5F9;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: var(--clr-text-muted);
+      font-size: 1.75rem;
+      overflow: hidden;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .avatar-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Interactive Selection Cards (SaaS-style Option Matrices) */
+    .selection-card {
+      border: 1px solid var(--clr-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-smooth);
+      height: 100%;
+      background-color: #ffffff;
+    }
+
+    .selection-card:hover {
+      border-color: #CBD5E1;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+
+    .selection-input {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--clr-primary);
+    }
+
+    .selection-input:checked + .selection-card,
+    .selection-card.selected {
+      border-color: var(--clr-primary);
+      background-color: rgba(37, 99, 235, 0.01);
+      box-shadow: 0 0 0 1px var(--clr-primary), 0 8px 20px rgba(37, 99, 235, 0.04);
+    }
+
+    /* Modern Segmented Segment Selectors (T-Shirt / Contact options) */
+    .segmented-control {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .segmented-item {
+      flex: 1;
+      min-width: 65px;
+    }
+
+    .segmented-input {
+      display: none;
+    }
+
+    .segmented-label {
+      display: block;
+      text-align: center;
+      border: 1px solid var(--clr-border);
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: var(--transition-smooth);
+      background-color: #ffffff;
+    }
+
+    .segmented-label:hover {
+      border-color: #CBD5E1;
+      background-color: #F8FAFC;
+    }
+
+    .segmented-input:checked + .segmented-label {
+      background-color: var(--clr-text-main);
+      border-color: var(--clr-text-main);
+      color: #ffffff;
+    }
+
+    /* Payment Portal Layout Structs */
+    .payment-gate-card {
+      border: 2px solid var(--clr-border);
+      border-radius: var(--radius-premium);
+      padding: 2rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      height: 100%;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .payment-gate-card:hover {
+      border-color: #CBD5E1;
+      transform: translateY(-3px);
+    }
+
+    .payment-gate-card.selected {
+      border-color: var(--clr-primary);
+      background-color: rgba(37, 99, 235, 0.01);
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.05);
+    }
+
+    .gate-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      background-color: #F1F5F9;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--clr-text-main);
+      margin-bottom: 1.25rem;
+      transition: var(--transition-smooth);
+    }
+
+    .payment-gate-card.selected .gate-icon {
+      background-color: var(--clr-primary);
+      color: #ffffff;
+    }
+
+    /* Invoice Ledger Layout */
+    .invoice-ledger {
+      background-color: #F8FAFC;
+      border-radius: 14px;
+      padding: 1.5rem;
+      border: 1px dashed var(--clr-border);
+    }
+
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .ledger-row.total-line {
+      border-top: 1px solid var(--clr-border);
+      padding-top: 0.75rem;
+      margin-bottom: 0;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: var(--clr-text-main);
+    }
+
+    /* Action Buttons Architecture */
+    .btn-premium-primary {
+      background-color: var(--clr-primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      font-weight: 500;
+      border-radius: 10px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-premium-primary:hover:not(:disabled) {
+      background-color: var(--clr-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-premium-primary:disabled {
+      background-color: #94A3B8;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .btn-premium-muted {
+      background-color: #F1F5F9;
+      color: var(--clr-text-main);
+      border: none;
+      padding: 0.75rem 1.75rem;
+      font-weight: 500;
+      border-radius: 10px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-premium-muted:hover {
+      background-color: #E2E8F0;
+    }
+
+    /* Real-time Field Level Validation Utilities */
+    .form-group-validation {
+      position: relative;
+    }
+    
+    .validation-status-icon {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .is-valid + .validation-status-icon {
+      display: block;
+      color: var(--clr-success);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-extrabold text-primary" href="index.html">
+        <span class="text-purple">Haba</span>tech
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#registerNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="registerNavbar">
+        <ul class="navbar-nav ms-auto align-items-center gap-2">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#courses">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#faq">FAQ</a></li>
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-primary rounded-pill px-4" href="admin/login.php">Admin Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-container">
+    
+    <!-- Central Multi-Step Tracking System -->
+    <div class="step-track-container" id="stepTrackContainer">
+      <div class="step-progress-line" id="stepProgressLine"></div>
+      
+      <div class="step-node active" data-step="1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Student</div>
+      </div>
+      <div class="step-node" data-step="2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Parent</div>
+      </div>
+      <div class="step-node" data-step="3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Course</div>
+      </div>
+      <div class="step-node" data-step="4">
+        <div class="step-circle">4</div>
+        <div class="step-label">Payment</div>
+      </div>
+    </div>
+
+    <!-- Core Form Wrapper Frame -->
+    <form id="bootcampRegForm" class="needs-validation" novalidate autocomplete="off">
+    <input type="hidden" name="csrf_token" id="csrfToken" value="">
+      <div class="premium-card">
+        
+        <!-- ==========================================================================
+             STEP 1: Student Information Profiles
+             ========================================================================== -->
+        <div class="form-step active" id="step1">
+          <div class="mb-4">
+            <h3 class="mb-1">Student Profiles</h3>
+            <p class="text-muted small">Please enter the descriptive criteria for the attendee profile.</p>
+          </div>
+
+          <!-- Passport Picture Optional Box Workspace -->
+          <div class="mb-4">
+            <label class="form-label d-block">Passport Photo (Optional)</label>
+            <div class="avatar-upload-wrapper" id="passportDropzone" onclick="document.getElementById('passportInput').click()">
+              <input type="file" id="passportInput" accept="image/*" class="d-none">
+              <div class="avatar-preview-box" id="avatarPreviewBox">
+                <i class="fa-solid fa-camera"></i>
+              </div>
+              <h6 class="mb-1 text-dark">Upload Passport Photo</h6>
+              <p class="text-muted small mb-0">You can complete your registration without a photo. You may upload one later.</p>
+            </div>
+          </div>
+
+          <!-- Structured Form Grid Schema -->
+          <div class="row g-3">
+            <div class="col-md-6 form-group-validation">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="firstName" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">First name is required.</div>
+            </div>
+            
+            <div class="col-md-6 form-group-validation">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lastName" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Last name is required.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="gender" class="form-label">Gender</label>
+              <select class="form-select" id="gender" required>
+                <option value="" selected disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Please choose a gender value.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="dob" class="form-label">Date of Birth</label>
+              <input type="date" class="form-control" id="dob" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Provide a valid date structure.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="school" class="form-label">School Name</label>
+              <input type="text" class="form-control" id="school" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">School context is required.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="currentClass" class="form-label">Current Class Level</label>
+              <input type="text" class="form-control" id="currentClass" placeholder="e.g. JSS2, SS1" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Class parameters are mandatory.</div>
+            </div>
+
+            <div class="col-md-12 form-group-validation">
+              <label for="nationality" class="form-label">Nationality</label>
+              <input type="text" class="form-control" id="nationality" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">State your country of origin.</div>
+            </div>
+
+            <div class="col-md-12 form-group-validation">
+              <label for="address" class="form-label">Residential Address</label>
+              <textarea class="form-control" id="address" rows="2" required></textarea>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Valid residential destination is needed.</div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ==========================================================================
+             STEP 2: Parent / Guardian Contact Matrices
+             ========================================================================== -->
+        <div class="form-step" id="step2">
+          <div class="mb-4">
+            <h3 class="mb-1">Parent / Guardian Information</h3>
+            <p class="text-muted small">Primary contact details for educational communications.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6 form-group-validation">
+              <label for="parentName" class="form-label">Full Parent Name</label>
+              <input type="text" class="form-control" id="parentName" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Parent identification is needed.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="relationship" class="form-label">Relationship to Student</label>
+              <input type="text" class="form-control" id="relationship" placeholder="e.g. Mother, Father, Uncle" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Please define relationship structure.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="occupation" class="form-label">Occupation</label>
+              <input type="text" class="form-control" id="occupation" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Occupation context is required.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="parentPhone" class="form-label">Phone Line</label>
+              <input type="tel" class="form-control" id="parentPhone" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Valid mobile reference is necessary.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="parentWhatsapp" class="form-label">WhatsApp Number</label>
+              <input type="tel" class="form-control" id="parentWhatsapp" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">WhatsApp sync line is mandatory.</div>
+            </div>
+
+            <div class="col-md-6 form-group-validation">
+              <label for="parentEmail" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="parentEmail" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">A proper email composition format is required.</div>
+            </div>
+
+            <div class="col-md-12 form-group-validation">
+              <label for="emergencyContact" class="form-label">Alternative Emergency Contact (Name & Number)</label>
+              <input type="text" class="form-control" id="emergencyContact" required>
+              <i class="fa-solid fa-circle-check validation-status-icon"></i>
+              <div class="invalid-feedback">Fallback communication parameters required.</div>
+            </div>
+
+            <!-- Segmented Selection Switchboard -->
+            <div class="col-md-12 mt-4">
+              <label class="form-label d-block">Preferred Contact Channel</label>
+              <div class="segmented-control">
+                <div class="segmented-item">
+                  <input type="radio" name="contactMethod" id="prefWhatsapp" value="WhatsApp" class="segmented-input" checked>
+                  <label for="prefWhatsapp" class="segmented-label">WhatsApp</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="contactMethod" id="prefPhone" value="Phone Call" class="segmented-input">
+                  <label for="prefPhone" class="segmented-label">Phone Call</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="contactMethod" id="prefEmail" value="Email" class="segmented-input">
+                  <label for="prefEmail" class="segmented-label">Email</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ==========================================================================
+             STEP 3: Course Configuration System
+             ========================================================================== -->
+        <div class="form-step" id="step3">
+          <div class="mb-4">
+            <h3 class="mb-1">Select Learning Track</h3>
+            <p class="text-muted small">Choose the specialized development pathway below.</p>
+          </div>
+
+          <!-- Interactive Selection Matrix Selection Target Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-12">
+              <input type="radio" name="courseSelection" id="courseScratch" value="Game Development with Scratch" data-price="30000" class="d-none" checked>
+              <label for="courseScratch" class="w-100 d-block">
+                <div class="selection-card d-flex justify-content-between align-items-start" id="cardScratch">
+                  <div>
+                    <h5 class="mb-1">Game Development with Scratch</h5>
+                    <p class="text-muted small mb-2">Upper Primary Track</p>
+                    <span class="badge bg-light text-dark border px-2.5 py-1.5">Interactive Dynamics</span>
+                  </div>
+                  <div class="text-end">
+                    <h4 class="text-primary mb-0">₣30,000</h4>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-12">
+              <input type="radio" name="courseSelection" id="courseMobile" value="Mobile App Development" data-price="35000" class="d-none">
+              <label for="courseMobile" class="w-100 d-block">
+                <div class="selection-card d-flex justify-content-between align-items-start" id="cardMobile">
+                  <div>
+                    <h5 class="mb-1">Mobile App Development</h5>
+                    <p class="text-muted small mb-2">JSS1 – JSS3 Track</p>
+                    <span class="badge bg-light text-dark border px-2.5 py-1.5">Android & iOS Frameworks</span>
+                  </div>
+                  <div class="text-end">
+                    <h4 class="text-primary mb-0">₣35,000</h4>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-12">
+              <input type="radio" name="courseSelection" id="courseWeb" value="Web Development" data-price="35000" class="d-none">
+              <label for="courseWeb" class="w-100 d-block">
+                <div class="selection-card d-flex justify-content-between align-items-start" id="cardWeb">
+                  <div>
+                    <h5 class="mb-1">Web Development</h5>
+                    <p class="text-muted small mb-2">SS1 – SS3 Track</p>
+                    <span class="badge bg-light text-dark border px-2.5 py-1.5">Full Stack Infrastructure</span>
+                  </div>
+                  <div class="text-end">
+                    <h4 class="text-primary mb-0">₣35,000</h4>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Configuration Adjustments -->
+          <div class="row g-4">
+            <div class="col-12">
+              <label class="form-label d-block">Preferred Session Block</label>
+              <div class="segmented-control">
+                <div class="segmented-item">
+                  <input type="radio" name="sessionTiming" id="sessMorning" value="Morning" class="segmented-input" checked>
+                  <label for="sessMorning" class="segmented-label">Morning</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="sessionTiming" id="sessAfternoon" value="Afternoon" class="segmented-input">
+                  <label for="sessAfternoon" class="segmented-label">Afternoon</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label d-block">Camp T-Shirt Measurement Profile</label>
+              <div class="segmented-control">
+                <div class="segmented-item">
+                  <input type="radio" name="tshirtSize" id="sizeXs" value="XS" class="segmented-input" checked>
+                  <label for="sizeXs" class="segmented-label">XS</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="tshirtSize" id="sizeS" value="S" class="segmented-input">
+                  <label for="sizeS" class="segmented-label">S</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="tshirtSize" id="sizeM" value="M" class="segmented-input">
+                  <label for="sizeM" class="segmented-label">M</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="tshirtSize" id="sizeL" value="L" class="segmented-input">
+                  <label for="sizeL" class="segmented-label">L</label>
+                </div>
+                <div class="segmented-item">
+                  <input type="radio" name="tshirtSize" id="sizeXl" value="XL" class="segmented-input">
+                  <label for="sizeXl" class="segmented-label">XL</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ==========================================================================
+             STEP 4: Invoice Audit & Payment Integration Gateway
+             ========================================================================== -->
+        <div class="form-step" id="step4">
+          <div class="mb-4">
+            <h3 class="mb-1">Review Statement & Payment Options</h3>
+            <p class="text-muted small">Review your statement items below and select a settlement model.</p>
+          </div>
+
+          <!-- Calculated Real-Time Invoice Summary Element -->
+          <div class="invoice-ledger mb-4">
+            <div class="ledger-row">
+              <span class="text-muted">Student Registered</span>
+              <span class="font-semibold text-dark" id="invStudent">--</span>
+            </div>
+            <div class="ledger-row">
+              <span class="text-muted">Selected Module Track</span>
+              <span class="font-semibold text-dark" id="invCourse">--</span>
+            </div>
+            <div class="ledger-row">
+              <span class="text-muted">Assigned Timing block</span>
+              <span class="font-semibold text-dark" id="invSession">--</span>
+            </div>
+            <hr class="my-3 text-muted opacity-25">
+            <div class="ledger-row">
+              <span class="text-muted">Tuition Line item</span>
+              <span class="font-semibold text-dark" id="invAmount">₣0</span>
+            </div>
+            <div class="ledger-row">
+              <span class="text-muted">Registration Administration Fee</span>
+              <span class="font-semibold text-dark">₣0</span>
+            </div>
+            <div class="ledger-row total-line">
+              <span>Total Statement Valuation</span>
+              <span class="text-primary" id="invTotal">₣0</span>
+            </div>
+          </div>
+
+          <!-- Dual Column Transaction Gateway Selectors -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <input type="radio" name="paymentType" id="payMethodOnline" value="online" class="d-none" checked>
+              <label for="payMethodOnline" class="w-100 h-100 d-block">
+                <div class="payment-gate-card selected" id="gateCardOnline">
+                  <div class="gate-icon">
+                    <i class="fa-solid fa-credit-card"></i>
+                  </div>
+                  <h5>Pay Instantly Online</h5>
+                  <p class="text-muted small mb-0">Settle instantly via Paystack gateway using Visa, Mastercard, or Mobile Money options.</p>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <input type="radio" name="paymentType" id="payMethodOffline" value="offline" class="d-none">
+              <label for="payMethodOffline" class="w-100 h-100 d-block">
+                <div class="payment-gate-card" id="gateCardOffline">
+                  <div class="gate-icon">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                  </div>
+                  <h5>Generate Offline Invoice</h5>
+                  <p class="text-muted small mb-0">Generate a digital statement item to process later via physical Cash or Bank Transfers.</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Conditionally Visible Process Flow Infobox -->
+          <div class="card bg-light border-0 rounded-3 p-3 d-none" id="offlineProcessBox">
+            <h6 class="text-dark mb-2"><i class="fa-solid fa-circle-info me-2 text-warning"></i>Offline Statement Roadmap</h6>
+            <ol class="small text-muted mb-0 ps-3">
+              <li class="mb-1">Registration processing sequence finished.</li>
+              <li class="mb-1">The system establishes a persistent ledger invoice item.</li>
+              <li class="mb-1">Print or download the PDF file item.</li>
+              <li class="mb-1">Bring statement documentation details to Habatech Desk.</li>
+              <li class="mb-1">Fulfill statement balance values physically.</li>
+              <li class="mb-1">Administrative desks map validation metrics directly.</li>
+              <li>Operational confirmation notice processed dynamically.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- ==========================================================================
+             Universal Form Control Deck
+             ========================================================================== -->
+        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+          <button type="button" class="btn btn-premium-muted" id="btnPrev" disabled>
+            <i class="fa-solid fa-arrow-left me-2"></i> Previous
+          </button>
+          <button type="button" class="btn btn-premium-primary" id="btnNext">
+            Next <i class="fa-solid fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- UI Logic Engines -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    /* ==========================================================================
+       Form Handler Controller Engine
+       ========================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentStep = 1;
+      const totalSteps = 4;
+
+      // UI Elements references
+      const form = document.getElementById('bootcampRegForm');
+      const csrfInput = document.getElementById('csrfToken');
+      const btnNext = document.getElementById('btnNext');
+      const btnPrev = document.getElementById('btnPrev');
+      const stepNodes = document.querySelectorAll('.step-node');
+      const progressLine = document.getElementById('stepProgressLine');
+      
+      // Passport interaction logic block
+      const passportInput = document.getElementById('passportInput');
+      const avatarPreviewBox = document.getElementById('avatarPreviewBox');
+      
+      passportInput.addEventListener('change', function() {
+        if(this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            avatarPreviewBox.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+
+      // Course selection interaction effects card synchronization
+      const courseRadios = document.querySelectorAll('input[name="courseSelection"]');
+      const courseCards = {
+        'courseScratch': document.getElementById('cardScratch'),
+        'courseMobile': document.getElementById('cardMobile'),
+        'courseWeb': document.getElementById('cardWeb')
+      };
+
+      function updateCourseCardStyles() {
+        courseRadios.forEach(radio => {
+          const card = courseCards[radio.id];
+          if(radio.checked) {
+            card.classList.add('selected');
+          } else {
+            card.classList.remove('selected');
+          }
+        });
+      }
+      courseRadios.forEach(r => r.addEventListener('change', updateCourseCardStyles));
+      updateCourseCardStyles(); // Initial runtime build pass
+
+      // Settlement channel selector UI updates
+      const payOnlineRadio = document.getElementById('payMethodOnline');
+      const payOfflineRadio = document.getElementById('payMethodOffline');
+      const gateCardOnline = document.getElementById('gateCardOnline');
+      const gateCardOffline = document.getElementById('gateCardOffline');
+      const offlineProcessBox = document.getElementById('offlineProcessBox');
+
+      function syncPaymentComponentStyles() {
+        if (payOnlineRadio.checked) {
+          gateCardOnline.classList.add('selected');
+          gateCardOffline.classList.remove('selected');
+          offlineProcessBox.classList.add('d-none');
+          if(currentStep === 4) btnNext.innerHTML = `Proceed to Paystack <i class="fa-solid fa-bolt ms-2"></i>`;
+        } else {
+          gateCardOffline.classList.add('selected');
+          gateCardOnline.classList.remove('selected');
+          offlineProcessBox.classList.remove('d-none');
+          if(currentStep === 4) btnNext.innerHTML = `Generate Invoice <i class="fa-solid fa-file-signature ms-2"></i>`;
+        }
+      }
+      [payOnlineRadio, payOfflineRadio].forEach(el => el.addEventListener('change', syncPaymentComponentStyles));
+
+      // Inline functional monitoring parameters checking individual step states
+      function validateStep(stepId) {
+        const stepContainer = document.getElementById(`step${stepId}`);
+        const inputs = stepContainer.querySelectorAll('input[required], select[required], textarea[required]');
+        let stepIsValid = true;
+
+        inputs.forEach(input => {
+          if(!input.checkValidity()) {
+            stepIsValid = false;
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+          } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          }
+        });
+        return stepIsValid;
+      }
+
+      // Live keyboard entry data confirmation updates
+      document.querySelectorAll('.form-control, .form-select').forEach(element => {
+        ['input', 'change', 'blur'].forEach(evt => {
+          element.addEventListener(evt, () => {
+            if(element.hasAttribute('required')) {
+              if(element.checkValidity()) {
+                element.classList.remove('is-invalid');
+                element.classList.add('is-valid');
+              } else {
+                element.classList.remove('is-valid');
+                element.classList.add('is-invalid');
+              }
+            }
+            // Real-time tracking adjustments to release step buttons smoothly
+            toggleNextButtonState();
+          });
+        });
+      });
+
+      function toggleNextButtonState() {
+        // Evaluate requirements block for currently visible active wizard context
+        const stepContainer = document.getElementById(`step${currentStep}`);
+        const missingInputs = stepContainer.querySelectorAll('input[required]:invalid, select[required]:invalid, textarea[required]:invalid');
+        btnNext.disabled = missingInputs.length > 0;
+      }
+
+      // Calculation mapping layer projecting values directly to invoicing matrices
+      function calculateInvoiceLedger() {
+        const selectedCourseRadio = document.querySelector('input[name="courseSelection"]:checked');
+        const priceVal = parseInt(selectedCourseRadio.getAttribute('data-price') || '0', 10);
+        
+        document.getElementById('invStudent').innerText = `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`;
+        document.getElementById('invCourse').innerText = selectedCourseRadio.value;
+        document.getElementById('invSession').innerText = document.querySelector('input[name="sessionTiming"]:checked').value;
+        document.getElementById('invAmount').innerText = `₣${priceVal.toLocaleString()}`;
+        document.getElementById('invTotal').innerText = `₣${priceVal.toLocaleString()}`;
+      }
+
+      // Main processing loop handling view adjustments
+      function transitionWizardStep(targetStep) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${targetStep}`).classList.add('active');
+
+        currentStep = targetStep;
+        
+        // Navigation context configurations
+        btnPrev.disabled = (currentStep === 1);
+        
+        if (currentStep === totalSteps) {
+          calculateInvoiceLedger();
+          syncPaymentComponentStyles();
+        } else {
+          btnNext.innerHTML = `Next <i class="fa-solid fa-arrow-right ms-2"></i>`;
+        }
+
+        // Active indicator nodes processing updates
+        stepNodes.forEach(node => {
+          const stepIdx = parseInt(node.getAttribute('data-step'), 10);
+          if(stepIdx < currentStep) {
+            node.classList.remove('active');
+            node.classList.add('completed');
+          } else if(stepIdx === currentStep) {
+            node.classList.add('active');
+            node.classList.remove('completed');
+          } else {
+            node.classList.remove('active', 'completed');
+          }
+        });
+
+        // Compute horizontal line width values matching layout frameworks
+        const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        progressLine.style.width = `${progressPercentage}%`;
+        
+        toggleNextButtonState();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Interactive Action Processing Deck listeners
+      btnNext.addEventListener('click', () => {
+        if (currentStep < totalSteps) {
+          if (validateStep(currentStep)) {
+            transitionWizardStep(currentStep + 1);
+          } else {
+            form.classList.add('was-validated');
+          }
+        } else {
+          // Terminal wizard verification execution segment reached
+          executeFormSubmission();
+        }
+      });
+
+      btnPrev.addEventListener('click', () => {
+        if (currentStep > 1) {
+          transitionWizardStep(currentStep - 1);
+        }
+      });
+
+      function executeFormSubmission() {
+        const isOnline = payOnlineRadio.checked;
+        const studentFullName = `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`;
+        const finalCourse = document.querySelector('input[name="courseSelection"]:checked').value;
+        const finalAmount = document.getElementById('invTotal').innerText;
+        const selectedCourse = document.querySelector('input[name="courseSelection"]:checked');
+        const courseFee = selectedCourse ? selectedCourse.getAttribute('data-price') : '30000';
+
+        const payload = {
+          csrf_token: csrfInput.value,
+          first_name: document.getElementById('firstName').value,
+          last_name: document.getElementById('lastName').value,
+          gender: document.getElementById('gender').value,
+          dob: document.getElementById('dob').value,
+          school: document.getElementById('school').value,
+          class_level: document.getElementById('currentClass').value,
+          nationality: document.getElementById('nationality').value,
+          address: document.getElementById('address').value,
+          parent_name: document.getElementById('parentName').value,
+          relationship: document.getElementById('relationship').value,
+          occupation: document.getElementById('occupation').value,
+          phone: document.getElementById('parentPhone').value,
+          whatsapp: document.getElementById('parentWhatsapp').value,
+          email: document.getElementById('parentEmail').value,
+          emergency_contact: document.getElementById('emergencyContact').value,
+          course: finalCourse,
+          course_id: selectedCourse && selectedCourse.id === 'courseScratch' ? 1 : (selectedCourse && selectedCourse.id === 'courseMobile' ? 2 : 3),
+          course_fee: courseFee,
+          session: document.querySelector('input[name="sessionTiming"]:checked').value,
+          tshirt_size: document.querySelector('input[name="tshirtSize"]:checked').value,
+          payment_method: isOnline ? 'paystack' : 'offline',
+          payment_type: isOnline ? 'online' : 'offline'
+        };
+
+        Swal.fire({
+          title: 'Processing Registration',
+          text: 'Please wait while we save your registration and prepare your invoice.',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        fetch('ajax/register.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+          Swal.close();
+          if (result.success) {
+            Swal.fire({
+              title: '🎉 Registration Successful',
+              html: `<div class="text-start"><p><strong>Registration Number:</strong> ${result.registration_number || 'N/A'}</p><p><strong>Invoice Number:</strong> ${result.invoice_number || 'N/A'}</p><p><strong>Payment Status:</strong> ${result.payment_status || 'N/A'}</p></div>`,
+              icon: 'success',
+              confirmButtonText: isOnline ? 'Continue to Payment' : 'View Invoice'
+            }).then(() => {
+              if (result.redirect) {
+                window.location.href = result.redirect;
+              } else {
+                location.reload();
+              }
+            });
+          } else {
+            Swal.fire({
+              title: 'Registration Failed',
+              html: `<p>${result.message || 'Please try again.'}</p>${result.error ? `<pre style="text-align:left;white-space:pre-wrap;word-break:break-word;">${result.error}</pre>` : ''}`,
+              icon: 'error'
+            });
+          }
+        })
+        .catch(() => {
+          Swal.close();
+          Swal.fire({
+            title: 'Registration Failed',
+            text: 'A server error occurred. Please try again.',
+            icon: 'error'
+          });
+        });
+      }
+
+      // Initial system diagnostics evaluation run pass
+      toggleNextButtonState();
+
+      fetch('ajax/csrf.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.csrf_token) {
+            csrfInput.value = data.csrf_token;
+          }
+        })
+        .catch(() => {});
+    });
+  </script>
+</body>
+</html>
