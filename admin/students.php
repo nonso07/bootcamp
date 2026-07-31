@@ -20,14 +20,14 @@ try {
             p.email AS parent_email,
             p.phone AS parent_phone,
             r.course_id,
-            c.course_name,
+            cl.course_name,
             r.registration_date
         FROM students s
         LEFT JOIN parents p ON p.id = s.parent_id
         LEFT JOIN registrations r ON r.id = (
             SELECT MAX(id) FROM registrations WHERE student_id = s.id
         )
-        LEFT JOIN courses c ON c.id = r.course_id
+        LEFT JOIN classes cl ON cl.id = r.course_id
         LEFT JOIN schools sc ON sc.id = s.school_id
         ORDER BY s.created_at DESC'
     );

@@ -6,12 +6,14 @@ require 'includes/auth.php';
 $pageTitle = 'Payments';
 $rows = [];
 $students = [];
+$catalogCourses = [];
 $message = $_SESSION['payment_message'] ?? null;
 $error = $_SESSION['payment_error'] ?? null;
 unset($_SESSION['payment_message'], $_SESSION['payment_error']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $studentId = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
+    $courseId = filter_input(INPUT_POST, 'course_id', FILTER_VALIDATE_INT);
     $reference = trim((string) ($_POST['reference'] ?? ''));
     $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
     $status = strtolower(trim((string) ($_POST['status'] ?? '')));
@@ -62,11 +64,15 @@ try {
 
     $studentsStmt = $pdo->query('SELECT s.id, CONCAT_WS(" ", s.first_name, s.last_name) AS student_name FROM students s ORDER BY s.first_name, s.last_name');
     $students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $coursesStmt = $pdo->query('SELECT course_id, course_name, course_price FROM courses ORDER BY course_name');
+    $catalogCourses = $coursesStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     error_log('Database Error: ' . $e->getMessage());
 
     $rows = [];
     $students = [];
+    $catalogCourses = [];
 }
 
 include 'includes/header.php';
@@ -151,12 +157,25 @@ include 'includes/header.php';
                             <input type="text" class="form-control" name="reference" placeholder="e.g. INV-1001" required>
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label">Course</label>
+                            <select class="form-select" id="paymentCourse" name="course_id" required>
+                                <option value="">Select course</option>
+                                <?php foreach ($catalogCourses as $course): ?>
+                                    <option value="<?php echo e($course['course_id']); ?>" data-price="<?php echo e($course['course_price'] ?? 0); ?>"><?php echo e($course['course_name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Course Price</label>
+                            <input type="text" class="form-control" id="paymentCoursePrice" readonly>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label">Amount</label>
-                            <input type="number" class="form-control" name="amount" min="0" step="0.01" placeholder="0.00" required>
+                            <input type="number" class="form-control" id="paymentAmount" name="amount" min="0" step="0.01" placeholder="0.00" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status" required>
+                            <select class="form-select" id="paymentStatus" name="status" required>
                                 <option value="part">Part</option>
                                 <option value="full">Full</option>
                             </select>
@@ -175,4 +194,26 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const courseSelect = document.getElementById('paymentCourse');
+    const coursePriceInput = document.getElementById('paymentCoursePrice');
+    const amountInput = document.getElementById('paymentAmount');
+    const statusSelect = document.getElementById('paymentStatus');
+
+    function syncAmount() {
+        const selected = courseSelect.options[courseSelect.selectedIndex];
+        const price = selected && selected.getAttribute('data-price') ? parseFloat(selected.getAttribute('data-price')) : 0;
+        const isPart = statusSelect.value === 'part';
+        coursePriceInput.value = price.toFixed(2);
+        courseSelect.disabled = !isPart;
+        amountInput.disabled = !isPart;
+        amountInput.value = isPart ? (amountInput.value || '') : price.toFixed(2);
+    }
+
+    courseSelect.addEventListener('change', syncAmount);
+    statusSelect.addEventListener('change', syncAmount);
+    syncAmount();
+});
+</script>
 <?php include 'includes/footer.php'; ?>
