@@ -1,1 +1,0 @@
-INSERT INTO admins(fullname,email,password,role) VALUES('Super Admin','admin@example.com','$2y$10$VY8MCPzM6j7sQ0wzJH9L8uPzW0fvkYlCYwH14r2raXIiQunlslqYy','Super Admin');
