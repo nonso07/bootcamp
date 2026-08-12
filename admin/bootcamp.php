@@ -28,6 +28,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($action === 'end' && $id) {
+        try {
+            $pdo->prepare('UPDATE bootcamps SET status = ? WHERE id = ?')->execute(['Completed', $id]);
+            $_SESSION['flash_message'] = 'Bootcamp ended successfully. You may now add another bootcamp for the same school.';
+            header('Location: bootcamp.php');
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['flash_error'] = 'Unable to end bootcamp.';
+            header('Location: bootcamp.php');
+            exit;
+        }
+    }
+
     $schoolId = filter_input(INPUT_POST, 'school_id', FILTER_VALIDATE_INT);
     $title = trim((string) ($_POST['title'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
@@ -47,14 +60,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        if (!$id) {
-            $existsStmt = $pdo->prepare('SELECT id FROM bootcamps WHERE school_id = ? LIMIT 1');
-            $existsStmt->execute([$schoolId]);
-            if ($existsStmt->fetchColumn()) {
-                $_SESSION['flash_error'] = 'This school already has a bootcamp assigned.';
-                header('Location: bootcamp.php');
-                exit;
-            }
+        $existsQuery = 'SELECT id FROM bootcamps WHERE school_id = ? AND status != ?';
+        $params = [$schoolId, 'Completed'];
+        if ($id) {
+            $existsQuery .= ' AND id != ?';
+            $params[] = $id;
+        }
+        $existsQuery .= ' LIMIT 1';
+
+        $existsStmt = $pdo->prepare($existsQuery);
+        $existsStmt->execute($params);
+        if ($existsStmt->fetchColumn()) {
+            $_SESSION['flash_error'] = 'This school already has an active bootcamp assigned. End the existing bootcamp before adding another.';
+            header('Location: bootcamp.php');
+            exit;
         }
 
         if ($id) {
@@ -143,10 +162,23 @@ include 'includes/header.php';
                                     <td><?php echo e($row['school_name'] ?: '-'); ?></td>
                                     <td><?php echo e($row['title'] ?: 'Untitled'); ?></td>
                                     <td><?php echo e($row['venue'] ?: '-'); ?></td>
-                                    <td><span class="badge bg-primary-subtle text-primary"><?php echo e($row['status'] ?: 'Upcoming'); ?></span></td>
+                                    <td>
+                                        <?php if (trim((string) $row['status']) === 'Completed'): ?>
+                                            <span class="badge bg-success-subtle text-success"><?php echo e($row['status']); ?></span>
+                                        <?php else: ?>
+                                            <span class="badge bg-primary-subtle text-primary"><?php echo e($row['status'] ?: 'Upcoming'); ?></span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a href="bootcamp.php?edit=<?php echo (int) $row['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <?php if (trim((string) $row['status']) !== 'Completed'): ?>
+                                            <form method="post" action="bootcamp.php" onsubmit="return confirm('End this bootcamp? This will allow adding another bootcamp for the same school.');">
+                                                <input type="hidden" name="action" value="end">
+                                                <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">End</button>
+                                            </form>
+                                            <?php endif; ?>
                                             <form method="post" action="bootcamp.php" onsubmit="return confirm('Delete this bootcamp?');">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">

@@ -49,7 +49,7 @@ JOIN registrations r ON r.id = i.registration_id
 JOIN students s ON s.id = r.student_id
 LEFT JOIN schools sc ON sc.id = s.school_id
 LEFT JOIN parents p ON p.id = s.parent_id
-LEFT JOIN courses c ON c.id = r.course_id
+LEFT JOIN courses c ON c.course_id = r.course_id
 LEFT JOIN payments pay ON pay.registration_id = r.id
 WHERE i.id = ?
 ORDER BY pay.created_at DESC

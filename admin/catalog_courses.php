@@ -72,7 +72,7 @@ if ($editId) {
 }
 
 try {
-    $stmt = $pdo->query('SELECT * FROM courses ORDER BY course_name');
+    $stmt = $pdo->query('SELECT * FROM courses ORDER BY course_id DESC');
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $rows = [];

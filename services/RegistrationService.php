@@ -5,7 +5,6 @@ require_once __DIR__ . '/../models/Parent.php';
 require_once __DIR__ . '/../models/Student.php';
 require_once __DIR__ . '/../models/Registration.php';
 require_once __DIR__ . '/../models/Invoice.php';
-require_once __DIR__ . '/../models/Payment.php';
 
 class RegistrationService
 {
@@ -14,7 +13,6 @@ class RegistrationService
     private StudentModel $studentModel;
     private RegistrationModel $registrationModel;
     private InvoiceModel $invoiceModel;
-    private PaymentModel $paymentModel;
 
     public function __construct(PDO $pdo)
     {
@@ -23,7 +21,6 @@ class RegistrationService
         $this->studentModel = new StudentModel($pdo);
         $this->registrationModel = new RegistrationModel($pdo);
         $this->invoiceModel = new InvoiceModel($pdo);
-        $this->paymentModel = new PaymentModel($pdo);
     }
 
     /**
@@ -35,8 +32,7 @@ class RegistrationService
 
         try {
             $requiredFields = [
-                'first_name', 'last_name', 'gender', 'dob', 'school', 'class_level', 'nationality', 'address',
-                'parent_name', 'relationship', 'phone', 'email', 'course', 'session', 'tshirt_size', 'payment_method'
+                'first_name', 'last_name', 'gender', 'dob', 'parent_name', 'phone', 'course_id', 'session', 'tshirt_size'
             ];
 
             $errors = validateRequired($input, $requiredFields);
@@ -51,11 +47,11 @@ class RegistrationService
 
             $parentId = $this->parentModel->create([
                 'name' => sanitize($input['parent_name']),
-                'relationship' => sanitize($input['relationship']),
+                'relationship' => sanitize($input['relationship'] ?? ''),
                 'occupation' => sanitize($input['occupation'] ?? ''),
                 'phone' => sanitize($input['phone']),
                 'whatsapp' => sanitize($input['whatsapp'] ?? ''),
-                'email' => filter_var($input['email'], FILTER_SANITIZE_EMAIL),
+                'email' => filter_var($input['email'] ?? '', FILTER_SANITIZE_EMAIL),
                 'emergency_contact' => sanitize($input['emergency_contact'] ?? ''),
             ]);
 
@@ -68,17 +64,27 @@ class RegistrationService
                 'gender' => sanitize($input['gender']),
                 'dob' => sanitize($input['dob']),
                 'school_id' => null,
-                'class_level' => sanitize($input['class_level']),
-                'nationality' => sanitize($input['nationality']),
-                'address' => sanitize($input['address']),
+                'class_level' => sanitize($input['class_level'] ?? ''),
+                'nationality' => sanitize($input['nationality'] ?? ''),
+                'address' => sanitize($input['address'] ?? ''),
                 'photo' => $photoName,
             ]);
 
-            $courseFee = (float) ($input['course_fee'] ?? 30000);
+            $courseId = isset($input['course_id']) ? (int) $input['course_id'] : 0;
+            $coursePriceStmt = $this->pdo->prepare('SELECT course_price FROM courses WHERE course_id = ? LIMIT 1');
+            $coursePriceStmt->execute([$courseId]);
+            $courseRow = $coursePriceStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$courseRow) {
+                throw new InvalidArgumentException('Invalid course selected.');
+            }
+
+            $courseFee = (float)$courseRow['course_price'];
             $paymentStatus = 'Pending';
+            $invoiceNumber = generateInvoiceNumber($this->pdo);
             $registrationId = $this->registrationModel->create([
+                'invoice_no' => $invoiceNumber,
                 'student_id' => $studentId,
-                'course_id' => (int) $input['course_id'],
+                'course_id' => $courseId,
                 'bootcamp_id' => null,
                 'tshirt_size' => sanitize($input['tshirt_size']),
                 'session' => sanitize($input['session']),
@@ -86,7 +92,6 @@ class RegistrationService
                 'payment_status' => $paymentStatus,
             ]);
 
-            $invoiceNumber = generateInvoiceNumber($this->pdo);
             $invoiceId = $this->invoiceModel->create([
                 'invoice_no' => $invoiceNumber,
                 'registration_id' => $registrationId,
@@ -100,30 +105,9 @@ class RegistrationService
 
             $this->invoiceModel->addItem($invoiceId, $courseFee);
 
-            $paymentMethod = sanitize($input['payment_method']);
-            $paymentGateway = $paymentMethod === 'paystack' ? 'Paystack' : 'Manual';
-            $paymentStatus = 'Pending';
-
-            $paymentId = $this->paymentModel->create([
-                'registration_id' => $registrationId,
-                'amount' => $courseFee,
-                'currency' => 'NGN',
-                'payment_method' => $paymentMethod,
-                'payment_gateway' => $paymentGateway,
-                'transaction_reference' => null,
-                'cinetpay_transaction_id' => null,
-                'status' => $paymentStatus,
-                'gateway_response' => null,
-                'paid_at' => null,
-            ]);
-
             createActivityLog($this->pdo, 'New student registered');
 
             $this->pdo->commit();
-
-            $redirect = $paymentMethod === 'paystack'
-                ? 'paystack_payment.php?id=' . $paymentId
-                : 'invoice.php?id=' . $invoiceId;
 
             return [
                 'success' => true,
@@ -131,9 +115,8 @@ class RegistrationService
                 'invoice_number' => $invoiceNumber,
                 'student_id' => $studentId,
                 'invoice_id' => $invoiceId,
-                'payment_method' => $paymentMethod,
                 'payment_status' => $paymentStatus,
-                'redirect' => $redirect,
+                'redirect' => 'invoice.php?id=' . $invoiceId,
             ];
         } catch (Throwable $e) {
             $this->pdo->rollBack();
