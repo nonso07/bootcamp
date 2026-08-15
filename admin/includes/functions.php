@@ -32,7 +32,7 @@ function getDashboardStats($pdo) {
 
 function getRecentRegistrations($pdo, $limit = 8) {
     try {
-        $stmt = $pdo->prepare('SELECT r.*, CONCAT_WS(" ", s.first_name, s.last_name) AS student_name, c.title AS course_name FROM registrations r LEFT JOIN students s ON s.id = r.student_id LEFT JOIN courses c ON c.id = r.course_id ORDER BY r.created_at DESC LIMIT ?');
+        $stmt = $pdo->prepare('SELECT r.*, CONCAT_WS(" ", s.first_name, s.last_name) AS student_name, cl.course_name FROM registrations r LEFT JOIN students s ON s.id = r.student_id LEFT JOIN classes cl ON cl.id = r.course_id ORDER BY r.created_at DESC LIMIT ?');
         $stmt->execute([$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {

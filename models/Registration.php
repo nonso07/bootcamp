@@ -7,8 +7,9 @@ class RegistrationModel
 
     public function create(array $data): int
     {
-        $stmt = $this->pdo->prepare('INSERT INTO registrations (student_id, course_id, bootcamp_id, tshirt_size, session, amount, payment_status, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())');
+        $stmt = $this->pdo->prepare('INSERT INTO registrations (invoice_no, student_id, course_id, bootcamp_id, tshirt_size, session, amount, payment_status, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())');
         $stmt->execute([
+            $data['invoice_no'],
             $data['student_id'],
             $data['course_id'],
             $data['bootcamp_id'] ?? null,
